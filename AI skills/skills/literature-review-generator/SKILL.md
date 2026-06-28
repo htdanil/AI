@@ -143,9 +143,11 @@ Write **one paragraph per focus point** (or two for Comprehensive depth), in the
 
 #### Paragraph structure (all depths)
 
-1. **Opening sentence** — introduce the theme and its relevance to the research topic. No citation needed; frame the intellectual territory.
-2. **Evidence sentences** — synthesize findings from retrieved papers. Every factual/empirical claim carries an in-text citation. Mix specific findings with characterizations of the evidence base ("A systematic review of…", "Several studies have found…", "Evidence is mixed regarding…").
-3. **Closing sentence** — synthesize what the evidence collectively implies, flag any debate or gap, or bridge to the next focus point.
+**Core principle — findings first:** Literature review paragraphs should primarily *report what studies found*, not explain why something is the case or argue the logic behind a phenomenon. Leave causal reasoning, theoretical interpretation, and "why this matters" discussion for the Discussion section of the manuscript. Here, the job is to faithfully map what the empirical and scholarly record shows.
+
+1. **Opening sentence** — briefly introduce the theme so the reader knows what evidence domain is being surveyed. Keep it tight; one sentence. Avoid elaborate theoretical framing or extended rationale — that belongs in the Discussion.
+2. **Evidence sentences** — the core of the paragraph. Report *what studies found*: specific results, effect sizes, patterns, outcomes, prevalence rates, associations. Anchor every claim directly to a retrieved paper. Use reporting language: *"found that"*, *"reported"*, *"observed"*, *"demonstrated"*, *"showed"*, *"documented"*. Avoid interpretive or argumentative language like *"this suggests that logically…"*, *"because of this…"*, *"the reason is…"*. Characterise the evidence base where useful ("A systematic review of…", "Several longitudinal studies have…", "Findings are inconsistent regarding…"), but always in service of describing the evidence, not constructing an argument.
+3. **Closing sentence** — briefly state what the collective evidence indicates (e.g., consistent support, mixed findings, a documented gap). Do not theorise about causes or implications — keep it descriptive. Bridge to the next focus point if natural.
 
 **Depth calibration:**
 
@@ -155,30 +157,31 @@ Write **one paragraph per focus point** (or two for Comprehensive depth), in the
 | Medium | 200–250 words | 4–5 | Main findings + brief note of contradictions or limits |
 | Comprehensive | 300–400 words (can split into 2 paragraphs) | 6–8 | Full synthesis: dominant view, dissenting evidence, methodological debate, open questions |
 
-**Citation format (default: APA author-date — mixed narrative and parenthetical):**
+**Citation format (default: APA author-date — narrative-preferred):**
 
-Use **both** citation styles within every paragraph — do not default to parenthetical-only:
+**Prefer narrative citations** throughout. Parenthetical citations are a secondary option used sparingly — only when a narrative citation would feel forced or when grouping multiple sources at the end of a clause.
 
-- **Narrative style** (subject of the sentence): *Smith (2019) found that…* / *Jones and Brown (2021) argue that…* / *Smith et al. (2022) demonstrate…*
-- **Parenthetical style** (end of clause or sentence): *…has been widely documented (Smith, 2019).* / *…(Jones & Brown, 2021; Smith et al., 2022).*
+- **Narrative style (preferred)**: *Smith (2019) found that…* / *Jones and Brown (2021) argue that…* / *Smith et al. (2022) demonstrate…*
+- **Parenthetical style (use sparingly)**: *…has been widely documented (Smith, 2019; Jones & Brown, 2021).* Reserve for multi-source bundling or when no natural subject slot exists.
 
 **Author formatting:**
 - 1 author narrative: *Smith (2019)* | parenthetical: *(Smith, 2019)*
 - 2 authors narrative: *Smith and Jones (2021)* | parenthetical: *(Smith & Jones, 2021)*
 - 3+ authors narrative: *Smith et al. (2022)* | parenthetical: *(Smith et al., 2022)*
 
-**Mixing rule:** Within each paragraph, aim for roughly half narrative and half parenthetical citations. Do not open three or more consecutive sentences with a narrative citation. Do not end three or more consecutive sentences with a parenthetical citation. Vary deliberately.
+**Citation preference rule:** Default to narrative. Use parenthetical only when narrative would be grammatically awkward or when bundling 3+ sources into one cite group. Do not force equal distribution — it is fine for a paragraph to be entirely narrative citations if the prose flows naturally that way.
 
 - If user specifies another style (numbered, Vancouver, Chicago), adapt both forms accordingly
 - For arXiv preprints, append *(preprint)* after the year in both forms: *Smith et al. (2024, preprint)* or *(Smith et al., 2024, preprint)*
 
 **Writing tone:**
 - Formal academic prose — no bullet points, headers, or tables in the paragraphs themselves
-- Objective and synthesis-oriented — no first person, no editorializing
-- Vary sentence structure; do not start every sentence with a citation
+- **Findings-oriented, not argument-oriented** — report what studies found; leave theoretical explanation and causal interpretation for the Discussion section
+- Objective and descriptive — no first person, no editorializing, no extended rationale or "why" explanations
+- Vary sentence structure; do not start every sentence the same way
 - Hedge where evidence is mixed: "suggests", "indicates", "may", "has been associated with"
 - Be confident where evidence is strong: "demonstrates", "has established", "consistently shows"
-- Never pad with vague filler sentences. If evidence is thin, say so rather than inflating word count
+- Never pad with vague filler sentences or theoretical generalisations. If evidence is thin, say so rather than inflating word count with background reasoning
 
 **Cross-paragraph coherence:**
 Add brief transitional phrases between paragraphs so they read as part of a continuous argument, not isolated summaries. Since this is a partial section, the final paragraph should end with a sentence that either points toward a gap the user's research addresses, or is written as an open transition the user can continue from.
