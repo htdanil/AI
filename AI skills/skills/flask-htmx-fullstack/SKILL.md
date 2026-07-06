@@ -1,18 +1,20 @@
 ---
 name: flask-htmx-fullstack
 description: >
-  Full-stack web application developer using Flask (server), HTMX + Alpine.js (frontend),
-  and sqlite-utils (database). Use this skill whenever the user wants to build, scaffold,
-  extend, or debug a personal web project or web application — even if they say things like
-  "build me an app", "create a website with a database", "I want a Flask project", "make
-  something with HTMX", "help me set up a web app", or "I want a simple full-stack app".
-  Also trigger when they mention CRUD apps, admin dashboards, personal tools, note-taking
-  apps, todo lists, inventory trackers, or any project involving a server + frontend + database.
-  Always use this skill: it encodes a battle-tested, opinionated stack with a structured
-  Grill → Plan → Build workflow that ensures clarity before coding, and correctness before aesthetics.
+  Full-stack web app developer using Flask, HTMX + Alpine.js, and a choice of database
+  layer — sqlite-utils (default) or SQLAlchemy (SQLite/Postgres/MySQL). Optionally applies
+  Karpathy coding guidelines (simplicity, surgical changes, explicit assumptions) if the
+  user opts in. Use whenever the user wants to build, scaffold, extend, or debug a
+  personal web project — even if they say "build me an app", "create a website with a
+  database", "I want a Flask project", "make something with HTMX", "help me set up a web
+  app", or "I want a simple full-stack app". Also trigger for CRUD apps, admin
+  dashboards, personal tools, note-taking apps, todo lists, inventory trackers, or any
+  server + frontend + database project. Always use this skill: it encodes a
+  battle-tested, opinionated stack with a Grill → Plan → Build workflow that ensures
+  clarity before coding, and correctness before aesthetics.
 ---
 
-# Flask + HTMX + Alpine.js + sqlite-utils — Full-Stack Skill
+# Flask + HTMX + Alpine.js — Full-Stack Skill
 
 ## Stack Overview
 
@@ -20,8 +22,19 @@ description: >
 |-----------|------------------|-------------------------------------------|
 | Server    | Flask            | Routes, API endpoints, HTML rendering     |
 | Frontend  | HTMX + Alpine.js | Interactivity without a JS build step     |
-| Database  | sqlite-utils     | Pythonic SQLite — no ORM boilerplate      |
+| Database  | sqlite-utils (default) **or** SQLAlchemy | Pythonic SQLite with no ORM boilerplate, or an ORM that also supports Postgres/MySQL |
 | Templates | Jinja2           | Server-side HTML rendering (Flask default)|
+
+**Database layer choice:** ask the user during the Grill step (see below).
+- Default: **sqlite-utils** if the user doesn't explicitly choose.
+- If the user picks **SQLAlchemy**, ask a follow-up: which database engine? Default: **SQLite** (via SQLAlchemy) if not specified; other options are PostgreSQL, MySQL, or "other."
+- Once the choice is made, load the matching reference file for canonical code patterns:
+  - `references/db-sqlite-utils.md` — sqlite-utils patterns (default)
+  - `references/db-sqlalchemy.md` — SQLAlchemy patterns (covers SQLite/Postgres/MySQL engine setup)
+
+**Coding guidelines choice:** also ask during the Grill step whether to apply the
+Karpathy coding guidelines (`references/karpathy-guidelines.md`) while building — never
+assume. If yes, follow that file throughout Build/Debug on top of this skill's own rules.
 
 ---
 
@@ -39,25 +52,58 @@ description: >
 
 Never skip or reorder steps. Never write code before the plan is approved.
 
+**Never assume.** Always initiate Step 1 (Grill) with `ask_user_input_v0` before doing
+anything else — even if the request already sounds detailed, simple, or "obvious." Do not
+infer scope, features, or the database choice from your own judgment instead of asking.
+The only assumptions allowed anywhere in this skill are the explicit stated defaults
+(e.g. sqlite-utils, SQLite engine) used when the user is *asked* and declines to specify —
+never a default applied because a question was skipped.
+
 ---
 
 ## Step 1 — Grill (Clarification)
+
+**Always initiate this step, no exceptions.** Even if the user's request already seems
+fully specified, detailed, or self-explanatory, do not skip straight to planning or
+building. Ask the questions below via `ask_user_input_v0` first — never fill in gaps
+from your own assumptions about what the user "probably" wants.
 
 Use the `ask_user_input_v0` tool to present interactive questions as buttons.
 Keep the first batch to 3 questions max. After answers, ask follow-up questions
 **only if genuine ambiguity remains** — not exhaustively.
 
 ### First-batch question categories to cover:
-- What does the app do / what problem does it solve?
-- What data does it manage? (what tables/entities)
+- What does the app do / what problem does it solve, and what data does it manage? (what tables/entities)
 - What actions does the user need? (CRUD, toggle, filter, search, etc.)
+- **Database layer**: sqlite-utils (simple, no ORM) or SQLAlchemy (ORM, supports SQLite/Postgres/MySQL)?
+  - Always present this as an explicit question — never assume sqlite-utils (or anything else) without asking first. Only fall back to the sqlite-utils default if the user, having been asked, declines to choose (e.g. "you choose"/"doesn't matter").
 
-### Follow-up if still unclear after first batch:
+### Second batch — always ask, right after the first batch:
+- **Coding guidelines**: apply the Karpathy coding guidelines while building? (See `references/karpathy-guidelines.md` — simplicity, surgical changes, explicit assumptions, verifiable success criteria.)
+  - Options: Yes, use them / No, skip them
+  - Always ask this explicitly — never assume either way.
+- **Conditional — only if SQLAlchemy was chosen above**: which database engine?
+  - Options: SQLite (default) / PostgreSQL / MySQL / Other
+  - If the user doesn't answer or says "you choose"/"doesn't matter", default to **SQLite**.
+  - Omit this question entirely if sqlite-utils was chosen (sqlite-utils only ever targets SQLite).
+
+### Further follow-up if still unclear after the above:
 - Multiple users or single-user?
 - Any relationships between data entities?
 - Specific UI behaviours (inline edit, drag-reorder, modals)?
 
 Stop grilling once the scope is clear enough to write an unambiguous plan.
+
+By the end of the Grill step you must have settled on exactly:
+1. The database layer — one of **sqlite-utils** (default), **SQLAlchemy + SQLite** (default
+   engine when SQLAlchemy is chosen), or **SQLAlchemy + Postgres/MySQL/Other**, and
+2. Whether to apply the Karpathy coding guidelines during Build/Debug.
+
+Carry both choices into the Plan and Build steps below. If the user opted into the Karpathy
+guidelines, load `references/karpathy-guidelines.md` and follow it throughout Steps 3–5
+(Build Phase 1, Debug, Build Phase 2) — it governs *how* you write and modify code
+(simplicity, surgical diffs, explicit assumptions, verifiable success criteria), on top of
+— not instead of — the workflow and code rules in this file.
 
 ---
 
@@ -74,8 +120,8 @@ A plain-language bullet list of every user-facing capability.
 ```
 project-name/
 ├── app.py
-├── database.py
-├── requirements.txt
+├── database.py        # contents depend on chosen DB layer — see references/db-*.md
+├── requirements.txt    # pins sqlite-utils OR SQLAlchemy (+ driver), per choice
 ├── templates/
 │   ├── base.html
 │   ├── index.html
@@ -83,6 +129,7 @@ project-name/
 └── static/
     └── main.css
 ```
+(If SQLAlchemy + Postgres/MySQL was chosen, also mention a `.env`/`DATABASE_URL` convention — see `references/db-sqlalchemy.md`.)
 
 | Method | URL              | Purpose                        | Returns         |
 |--------|------------------|--------------------------------|-----------------|
@@ -93,13 +140,14 @@ project-name/
 
 ### Tier 3 — DB Schema + HTMX Interaction Map + Components
 
-**DB Schema:**
+**DB Schema:** Present this table-shape schema regardless of DB layer (it's the shared
+source of truth for both sqlite-utils tables and SQLAlchemy models):
 ```
 table: items
   id       INTEGER PRIMARY KEY
   title    TEXT NOT NULL
-  done     INTEGER DEFAULT 0   -- sqlite has no BOOLEAN; use 0/1
-  created  TEXT                -- ISO timestamp string
+  done     INTEGER DEFAULT 0   -- sqlite has no BOOLEAN; use 0/1 (SQLAlchemy: use Boolean, it maps automatically)
+  created  TEXT                -- ISO timestamp string (SQLAlchemy: use DateTime)
 ```
 
 **HTMX Interaction Map:** (list every dynamic interaction)
@@ -116,6 +164,14 @@ table: items
 
 Generate ALL files at once with complete, commented code.
 No CSS framework. Minimal inline styles only. Pure function over form.
+
+Before writing `database.py`, load the reference file matching the Grill-step choice:
+- sqlite-utils → `references/db-sqlite-utils.md`
+- SQLAlchemy (any engine) → `references/db-sqlalchemy.md` (then use the SQLite, Postgres,
+  or MySQL subsection matching the chosen engine)
+
+Use the canonical `database.py`/`app.py` patterns and `requirements.txt` from that file verbatim
+as a starting point, adapted to the app's actual schema.
 
 ### `app.py` must always include:
 ```python
@@ -203,57 +259,27 @@ Sections:
 4. **Comment every `x-*` directive** inline — what state it tracks or reacts to
 5. **Comment every DB operation** — table, query intent, shape of data returned
 6. Keep routes thin — delegate all DB logic to `database.py`
-7. Always use `alter=True` in sqlite-utils inserts to allow schema evolution
+7. If using **sqlite-utils**: always use `alter=True` on inserts to allow schema evolution.
+   If using **SQLAlchemy**: define columns explicitly on the model and use `Alembic`
+   (or `db.create_all()` for simple/prototype apps) for schema changes — see `references/db-sqlalchemy.md`.
 8. Always return HTML partials from HTMX-targeted routes, not JSON
+9. If the user opted into the Karpathy guidelines during the Grill step, apply
+   `references/karpathy-guidelines.md` on every Build/Debug step (minimal surface area,
+   surgical diffs, explicit assumptions, verifiable success criteria) in addition to
+   rules 1-8 above.
 
 ---
 
 ## Canonical Patterns
 
-### `database.py`
-```python
-# database.py
-# All DB access lives here. Import get_db() in app.py.
-from sqlite_utils import Database
+### `database.py` and `app.py` (DB-layer-specific)
+These depend on the Grill-step database choice. Load the matching reference file for
+the full canonical `database.py`, `app.py` shell, and `requirements.txt`:
+- **sqlite-utils** (default) → `references/db-sqlite-utils.md`
+- **SQLAlchemy** (SQLite / Postgres / MySQL) → `references/db-sqlalchemy.md`
 
-DB_PATH = "data.db"
-
-def get_db() -> Database:
-    """Return a live sqlite-utils Database. Auto-creates file if missing."""
-    return Database(DB_PATH)
-
-def init_db():
-    """Create all tables at app startup. Safe to call multiple times."""
-    db = get_db()
-    if "items" not in db.table_names():
-        db["items"].insert(
-            {"title": "Welcome item", "done": False},
-            alter=True  # allows adding columns later without schema migration
-        )
-```
-
-### `app.py` shell
-```python
-# app.py
-from flask import Flask, render_template, request
-from database import get_db, init_db
-
-app = Flask(__name__)
-
-with app.app_context():
-    init_db()  # ensure tables exist before first request
-
-@app.route("/")
-def index():
-    """GET / — render main page with all rows from DB."""
-    db = get_db()
-    items = list(db["items"].rows)
-    return render_template("index.html", items=items)
-
-if __name__ == "__main__":
-    # debug=True: auto-reloads on file save, shows tracebacks in browser
-    app.run(debug=True, use_reloader=True)
-```
+Everything below (templates, HTML partial pattern, HTMX/Alpine reference) is DB-agnostic
+and applies no matter which database layer was chosen.
 
 ### `templates/base.html`
 ```html
@@ -283,6 +309,9 @@ if __name__ == "__main__":
 ```
 
 ### HTML partial pattern (routes returning fragments)
+The *shape* of this pattern (thin route → DB call → render a fragment template) is the
+same regardless of DB layer; only the DB call itself changes. Shown here with sqlite-utils
+syntax — see `references/db-sqlalchemy.md` for the SQLAlchemy equivalent of the DB call.
 ```python
 @app.route("/items", methods=["POST"])
 def create_item():
@@ -329,10 +358,10 @@ def create_item():
 ---
 
 ## `requirements.txt`
-```
-flask>=3.0
-sqlite-utils>=3.35
-```
+Contents depend on the chosen DB layer — see the exact pins in:
+- `references/db-sqlite-utils.md` (flask + sqlite-utils)
+- `references/db-sqlalchemy.md` (flask + SQLAlchemy + the driver for the chosen engine)
+
 `pip install -r requirements.txt`
 
 ---
@@ -343,7 +372,7 @@ sqlite-utils>=3.35
 - [ ] `python app.py` starts without errors
 - [ ] All CRUD operations work end-to-end
 - [ ] HTMX requests visible in browser DevTools → Network tab
-- [ ] `data.db` created and rows persist across restarts
+- [ ] Database created/connected (SQLite file, or DB server for Postgres/MySQL) and rows persist across restarts
 - [ ] No JS console errors
 
 **Phase 2 done when user confirms:**
