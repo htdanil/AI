@@ -2,15 +2,16 @@
 name: research-theme-explorer
 description: >
   Interactive research theme and methodology explorer for post-PhD economists and social scientists.
-  Guides the user through a structured, multi-level tree of contemporary research themes, sub-themes,
-  and methods — each with a rich info card (TLDR, pros/cons, what's new, why popular, caveats) —
-  and culminates in a curated reading list (papers, books, online resources) once the user picks a
-  focus area. Trigger this skill whenever the user wants to explore research directions, choose a
-  research methodology, find a new topic to work on, or asks what's trending in economics or social
-  science research. Also trigger when the user says things like "help me find a research theme",
-  "what should I study", "what methods are popular", "I'm looking for a new research direction",
-  "suggest themes for my research", "what's trending in economics", or any similar phrasing that
-  implies exploring research ideas without having one fully formed yet. When in doubt, trigger.
+  Asks upfront whether the user already has a topic or wants theme suggestions, then guides them
+  through a structured, multi-level tree of contemporary research themes, sub-themes, and methods —
+  each with a rich info card (TLDR, pros/cons, what's new, why popular, caveats, a plain-language
+  concept explainer, key resources, and a development timeline) — and culminates in a curated
+  reading list once the user picks a focus area. Trigger whenever the user wants to explore research
+  directions, choose a methodology, find a new topic, or asks what's trending in economics or social
+  science. Also trigger for "help me find a research theme", "what should I study", "what methods
+  are popular", "I'm looking for a new research direction", "suggest themes for my research",
+  "what's trending in economics", or similar phrasing implying exploration without a fully formed
+  idea yet. When in doubt, trigger.
 ---
 
 # Research Theme Explorer
@@ -34,16 +35,24 @@ and opinionated where it helps the user decide. Avoid jargon without explanation
 
 Read the user's message carefully.
 
-- **No topic given** → Go to STEP 1 (theme menu).
-- **Topic already given** (broad or specific) → Go to STEP 2. Show sub-themes/variants/latest
-  developments for that topic using Info Cards, then ask if they want to drill down further or move
-  to the reading list. **Never skip directly to STEP 3, even for a very specific topic.**
+- **Topic already given** (broad or specific) → Treat it as their theme pick and go straight to
+  STEP 2 (Action Menu) for that topic. **Never skip directly to STEP 3 or STEP 4 — always show the
+  Action Menu first.**
+- **No topic given** → Before generating anything, ask the user directly:
+
+  > "Do you already have a topic or research idea in mind, or would you like me to suggest some
+  > themes to browse?"
+
+  - If they respond with a topic → go to STEP 2 (Action Menu) for that topic.
+  - If they say they don't have one / want suggestions → go to STEP 1 (theme menu).
+  - **Never generate the theme menu before asking this question first.** This avoids wasting effort
+    generating themes the user didn't want if they actually had a topic in mind already.
 
 ---
 
 ### STEP 1 — Theme Discovery Menu
 
-Present **9–10 contemporary themes** as a numbered list. For each theme, show a compact **Info Card**
+Present **5 contemporary themes** as a numbered list. For each theme, show a compact **Info Card**
 (see format below). After the list, ask:
 
 > "Which of these interests you? Or would you like 5 more themes to browse?"
@@ -58,27 +67,65 @@ offering 5 more until the user picks one. Never repeat a theme already shown.
 - Vary the mix across rounds — don't cluster all quantitative methods first or all policy topics later.
 - Never repeat a theme already presented in earlier rounds.
 
+**Keep track of the full list of themes shown so far (across all rounds) — it gets reused as the
+"return to theme menu" recap in STEP 5.**
+
 ---
 
-### STEP 2 — Sub-theme / Method Drill-Down
+### STEP 2 — Action Menu
 
-Once the user picks a theme, present **6–8 sub-themes or methods** within that theme, each with its
-own Info Card. Then ask:
+**As soon as the user picks a theme — and before showing any sub-theme cards, reading list, or
+explainer — immediately ask this three-option question. Do not show sub-theme Info Cards first.**
 
-> "Would you like to explore one of these further, or shall I list additional sub-themes?"
+> "What would you like to do next?
+> 1. **Drill down further** — see sub-topics, variants, or the latest developments within this area.
+> 2. **Get a reading list** — foundational papers, recent papers, books, and online resources.
+> 3. **Get a Method Explainer in R & Stata** — concept, algorithm, worked tutorials on real and
+>    simulated data, and ranked package comparisons."
 
-**Always ask before moving to STEP 3.** Even when the current topic feels specific enough to anchor
-a reading list, never jump to STEP 3 automatically. Instead, always pause and ask:
+**Immediately after this three-option question, before the user picks anything, show a quick
+heading-only preview of the sub-topics/methods that Option 1 would drill into** — just a plain
+numbered list of exactly **5 names**, no Info Cards, no descriptions, no links. This gives the user
+a sense of what's underneath before they decide which option to take. For example:
 
-> "We could go straight to the reading list for **[topic]**, or I can drill down further into
-> sub-topics, specific variants, or the latest developments. What would you prefer?"
+> "A preview of what's inside this area, if you want to drill down:
+> 1. [Sub-topic 1]
+> 2. [Sub-topic 2]
+> 3. [Sub-topic 3]
+> 4. [Sub-topic 4]
+> 5. [Sub-topic 5]"
 
-This applies in all cases:
-- User selects a sub-theme step by step through the tree.
+- Generate this heading list using the same selection criteria as STEP 2a (Depth rule of thumb,
+  variety, no repeats). **Do not generate a separate list later** — if the user picks Option 1,
+  reuse these exact same headings as the basis for STEP 2a's Drill-Down Output (now expanding each
+  into a full Info Card) rather than regenerating a different set.
+- Keep this preview brief — headings only. Full Info Cards still only appear once the user actually
+  chooses Option 1.
+
+- **Option 1** → go to STEP 2a (Drill-Down Output).
+- **Option 2** → go to STEP 3 (Reading List).
+- **Option 3** → go to STEP 4 (Method Explainer), even without a reading list first. If the current
+  topic is a broad theme rather than one specific method, briefly ask the user to confirm or pick
+  the specific method/technique the explainer should cover before proceeding.
+
+**This menu is asked exactly once per theme/sub-theme pick — right when the user picks it, nothing
+else first.** This applies in all cases:
+- User selects a theme from STEP 1's list.
+- User selects a sub-theme from a STEP 2a drill-down list.
 - User provides a specific method or topic upfront (e.g., "Difference-in-Differences").
-- A topic appears narrow enough to anchor a reading list right away.
 
-**Never assume the user is ready for STEP 3 — always ask first.**
+**Never skip straight to STEP 3 or STEP 4, and never show sub-theme cards, without this menu first.**
+
+After STEP 2a, STEP 3, or STEP 4 completes, always continue to STEP 5.
+
+---
+
+### STEP 2a — Drill-Down Output
+
+Triggered by **Option 1** above. Present exactly **5 sub-themes or methods** within the current theme,
+each with its own Info Card (see format below). Reuse the exact same headings already shown as the
+heading-only preview in STEP 2 — expand each into a full Info Card rather than generating a new set
+of sub-themes.
 
 **Depth rule of thumb:**
 - Broad theme (e.g., ML in Social Science) → up to 3 levels deep available
@@ -87,25 +134,36 @@ This applies in all cases:
   comparisons with close alternatives
 - Use judgment on what to offer at each level, but always let the user decide when to stop
 
+Once the user picks one of these sub-themes, go back to STEP 2 (Action Menu) for it — do not show
+another list of sub-themes without asking the Action Menu question first.
+
 ---
 
 ### STEP 3 — Reading List
 
-Once the user has chosen a specific topic/method/sub-theme, produce a structured **Reading List** with
-these sections:
+Once the user has chosen **Option 2** in STEP 2, produce a structured **Reading List** with these
+sections:
+
+**Include a URL link for every single item in every section below** — a DOI link, journal page,
+publisher/Google Books page, course page, video URL, package/repo URL, etc. Only omit a link if one
+genuinely does not exist online, and say so explicitly ("no stable link available") rather than
+silently dropping it.
 
 #### 📄 Foundational Papers (3–5)
-Seminal academic papers. Include: authors, year, journal, a one-sentence hook, and a link or DOI if
-widely available.
+Seminal academic papers. Include: authors, year, journal, a one-sentence hook, and a **URL link**
+(DOI, journal page, or SSRN/NBER page).
 
 #### 🔬 Recent / Cutting-Edge Papers (3–5)
-Papers from roughly the last 3–5 years. Same format. Flag if a paper is NBER/SSRN working paper.
+Papers from roughly the last 3–5 years. Same format, with **URL link**. Flag if a paper is
+NBER/SSRN working paper.
 
 #### 📚 Books & Textbook Chapters (2–4)
-Full books or specific chapters. Include what chapters/sections are most relevant.
+Full books or specific chapters. Include what chapters/sections are most relevant, plus a **URL
+link** (publisher page, Google Books, or a legitimate open-access copy).
 
 #### 🌐 Online Resources (3–5)
-Course materials, blog posts, YouTube lectures, replication code repos, software docs. Prefer:
+Course materials, blog posts, YouTube lectures, replication code repos, software docs — each with a
+**URL link**. Prefer:
 - NBER Summer Institute videos
 - Mixtape Sessions / Scott Cunningham resources
 - QuantEcon
@@ -113,7 +171,8 @@ Course materials, blog posts, YouTube lectures, replication code repos, software
 - Andrew Ng / fast.ai for ML-heavy topics
 
 #### 💻 Software / Code Packages (1–3)
-Relevant R packages, Stata commands, Python libraries. Include a one-liner on what each does.
+Relevant R packages, Stata commands, Python libraries. Include a one-liner on what each does plus a
+**URL link** (CRAN/GitHub page, SSC/Stata Journal page, or PyPI page).
 
 #### 🗺️ Suggested Learning Path
 A short (4–6 step) sequence: what to read/do first, second, etc. Tailor to someone with a PhD in
@@ -250,12 +309,67 @@ Format each as: `[N]. [Title] — [URL] — one-line description of what it cove
 
 ---
 
+### STEP 5 — Return to Theme Menu
+
+After STEP 2a (Drill-Down Output), STEP 3 (Reading List), or STEP 4 (Method Explainer) finishes
+delivering its content — regardless of which of the three options the user picked — always close
+by re-showing the **list of themes** the user has been choosing from (just the numbered names, not
+full Info Cards, to avoid repeating content already shown), and ask what they'd like to do next.
+
+> "Here's the theme list again in case you'd like to explore something else:
+> 1. [Theme 1]
+> 2. [Theme 2]
+> ...
+>
+> Would you like to explore a different theme, keep going with **[current topic]**, or wrap up here?"
+
+- Reuse the exact same theme list already generated in STEP 1 (including any additional rounds of
+  5 shown) — don't regenerate different themes.
+- If the user picks a different theme from the list → go to STEP 2 (Action Menu) for that theme.
+- If the user wants to keep going with the current topic → go to STEP 2 (Action Menu) for it again.
+- If the user wants more/new themes → go back to STEP 1 to generate another round of 5.
+
+---
+
 ## Info Card Format
 
-Use this format for EVERY theme, sub-theme, or method presented:
+Use this format for EVERY theme, sub-theme, or method presented. Each card has two visually
+separate blocks: a **Deep Dive** block first (Concept Explainer, Resources, Timeline), then the
+**Quick Take** block (TLDR, pros/cons, etc.) below a divider.
 
 ```
 **[N]. [Theme / Method Name]**
+
+🧑‍🏫 **Concept Explainer** *(explained for a 12th-grade student)*
+  - What it is: plain-language explanation, using an everyday analogy if it helps.
+  - How it works — Algorithm: the core logic laid out as a **numbered, step-by-step sequence**
+    (e.g., "1. Start with... 2. Then... 3. Compare... 4. Conclude..."). This should read like a
+    recipe someone could follow, not just a description — enough steps to actually see the
+    mechanism, not just "it uses statistics."
+  - What it requires: type of data needed (cross-sectional, panel, time series, text,
+    experimental, etc.), rough sample size considerations, and typical software/tools
+    (R, Stata, Python, specific packages, etc.).
+
+📚 **Resources** *(2–3 key sources)*
+  For each resource, give:
+  - Name/title, author or source, and type (paper / book / online article / course).
+  - A **bird's-eye snapshot**: 1–2 plain sentences (12th-grade reading level) telling the user
+    what they'd actually get out of it and how hard/rewarding it is to go through — e.g., "Short
+    and very readable, no math background needed, best if you just want the big idea" vs. "Dense
+    and technical, assumes you already know regression, but it's THE original paper everyone
+    cites — worth it if you want to go deep." The point is to help the user decide, at a glance,
+    whether it's worth their time before clicking through.
+  - **URL link** for every resource — include the actual link (DOI, journal/publisher page,
+    Google Books, course page, article URL, etc.). Only skip a link if one genuinely doesn't exist,
+    and say so explicitly rather than omitting silently.
+
+🕰️ **Timeline** *(3–5 points)*
+  Brief history of the concept/method — origin, key milestones or turning points, and where it
+  stands today.
+
+---
+
+⚡ **Quick Take**
 > 📌 *TLDR:* One sentence on what this is.
 > 🔥 *Why popular:* One sentence.
 > 🆕 *What's new:* One sentence on recent developments or frontier debates.
@@ -264,7 +378,12 @@ Use this format for EVERY theme, sub-theme, or method presented:
 > 💡 *Good fit if:* One sentence on who this suits best.
 ```
 
-Keep each card tight — the user is browsing, not reading a textbook. Aim for under 100 words per card.
+Keep each card readable but complete — the user is browsing, not reading a textbook, but the Deep
+Dive block (Concept Explainer, Resources, Timeline) should still be genuinely informative rather
+than one throwaway line each. Aim for roughly 150–200 words per card given the added depth. Always
+keep the Deep Dive block visually first and clearly separated (e.g., a horizontal rule) from the
+Quick Take block below it, so the user can skim Quick Take alone if they just want the gist, or
+read Deep Dive if they want real understanding.
 
 ---
 
@@ -281,11 +400,11 @@ Keep each card tight — the user is browsing, not reading a textbook. Aim for u
 
 ## Edge Cases
 
-- **User names a very specific topic immediately** (e.g., "Callaway-Sant'Anna DiD"): Go to STEP 2
-  — show sub-topics, variants, or latest developments with Info Cards, then ask if they want to
-  drill down further or move to the reading list. Never skip straight to STEP 3.
-- **User asks for comparison** between two methods: Show side-by-side Info Cards, then ask if they
-  want to go deeper on one.
+- **User names a very specific topic immediately** (e.g., "Callaway-Sant'Anna DiD"): Go straight to
+  STEP 2 — present the three-option menu (drill down / reading list / method explainer)
+  immediately, without showing sub-topic Info Cards first. Never skip straight to STEP 3 or STEP 4.
+- **User asks for comparison** between two methods: Show side-by-side Info Cards, then present the
+  three-option menu for whichever one they want to pursue further.
 - **User asks "what's trending right now"**: Generate themes from the frontier — staggered DiD,
   ML debiasing, LLMs for text-as-data, causal ML, nowcasting, and similar active areas.
 - **User is unsure**: Offer a quick 3-question "fit finder" to narrow down (what data do you have?
